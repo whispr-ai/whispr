@@ -12,8 +12,6 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var audioRecorder = AudioRecorderManager()
     @State private var showPermissionModal = false
-    @State private var isListening = true
-    @State private var pulseAnimation = false
 
     var body: some View {
         VStack {
@@ -22,8 +20,7 @@ struct ContentView: View {
                 VStack(spacing: 20) {
                     // Listening 状态条
                     ListeningStatusView(
-                        isListening: $isListening,
-                        pulseAnimation: $pulseAnimation
+                        isListening: audioRecorder.isRecording,
                     )
                     Spacer()
                 }
@@ -50,15 +47,6 @@ struct ContentView: View {
             if !audioRecorder.hasPermission {
                 showPermissionModal = true
             }
-
-            // 启动脉冲动画
-            withAnimation(
-                Animation.easeInOut(duration: 2.0).repeatForever(
-                    autoreverses: true
-                )
-            ) {
-                pulseAnimation = true
-            }
         }
         .onChange(of: audioRecorder.hasPermission) { hasPermission in
             if !hasPermission {
@@ -67,51 +55,6 @@ struct ContentView: View {
                 showPermissionModal = false
             }
         }
-    }
-}
-
-// Listening 状态视图
-struct ListeningStatusView: View {
-    @Binding var isListening: Bool
-    @Binding var pulseAnimation: Bool
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Circle()
-                .fill(Color.primary)
-                .frame(width: 12, height: 12)
-                .scaleEffect(pulseAnimation ? 1.2 : 1.0)
-                .opacity(pulseAnimation ? 0.7 : 1.0)
-
-            Text("Listening...")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white)
-
-            Spacer()
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 18)
-        .background(
-            RoundedRectangle(cornerRadius: 25)
-                .fill(.regularMaterial)
-                .background(Color.black.opacity(0.3))
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 25))
-        // 边框渐变并且圆角
-        .overlay(
-            RoundedRectangle(cornerRadius: 25)
-                .stroke(
-                    LinearGradient(
-                        gradient: Gradient(colors: [.blue, .purple]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 2
-                )
-        )
-
-        Spacer()
-
     }
 }
 
