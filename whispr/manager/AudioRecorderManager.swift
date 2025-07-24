@@ -36,7 +36,7 @@ class AudioRecorderManager: NSObject, ObservableObject {
     }
 
     func checkPermissionStatus() {
-        switch AVAudioApplication.shared.recordPermission {
+        switch AVAudioSession.sharedInstance().recordPermission {
         case .granted:
             hasPermission = true
             permissionStatus = "已授权"
@@ -53,15 +53,14 @@ class AudioRecorderManager: NSObject, ObservableObject {
     }
 
     func requestPermission() {
-        AVAudioApplication.requestRecordPermission(completionHandler: {
-            [weak self] granted in
+        AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
             DispatchQueue.main.async {
                 self?.hasPermission = granted
                 self?.permissionStatus = granted ? "已授权" : "已拒绝"
                 // 权限变更后重新检查状态
                 self?.checkPermissionStatus()
             }
-        })
+        }
     }
 
     func startRecording() {
