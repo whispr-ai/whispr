@@ -14,6 +14,7 @@ struct whisprApp: App {
         WindowGroup {
             ContentView()
         }
-        .defaultSize(width: 1000, height: 1000)
+        .defaultSize(width: 1000, height: 800)
+        .windowStyle(.plain)
     }
 }

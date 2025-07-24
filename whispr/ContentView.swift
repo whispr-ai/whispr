@@ -12,70 +12,52 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var audioRecorder = AudioRecorderManager()
     @State private var showPermissionModal = false
+    @State private var isListening = true
+    @State private var pulseAnimation = false
 
     var body: some View {
-        VStack(spacing: 30) {
-            //            Model3D(named: "Scene", bundle: realityKitContentBundle)
-            //                .padding(.bottom, 50)
-
-            Text("Hello, world!123123")
-                .font(.title)
-
-            VStack(spacing: 20) {
-                Text("麦克风权限状态: \(audioRecorder.permissionStatus)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-
-                Button(action: {
-                    if audioRecorder.hasPermission {
-                        audioRecorder.toggleRecording()
-                    } else {
-                        showPermissionModal = true
-                    }
-                }) {
-                    HStack {
-                        Image(
-                            systemName: audioRecorder.isRecording
-                                ? "stop.circle.fill" : "mic.circle.fill"
-                        )
-                        .font(.title2)
-
-                        Text(
-                            audioRecorder.isRecording
-                                ? "停止录音"
-                                : audioRecorder.hasPermission
-                                    ? "开始录音" : "申请麦克风权限"
-                        )
-                    }
-                    .padding()
-                    .foregroundColor(.white)
+        VStack {
+            HStack(spacing: 20) {
+                // 左侧面板
+                VStack(spacing: 20) {
+                    // Listening 状态条
+                    ListeningStatusView(
+                        isListening: $isListening,
+                        pulseAnimation: $pulseAnimation
+                    )
+                    Spacer()
                 }
+                .frame(width: 300)
 
-                if audioRecorder.isRecording {
-                    HStack {
-                        Circle()
-                            .fill(Color.red)
-                            .frame(width: 10, height: 10)
-                            .scaleEffect(audioRecorder.isRecording ? 1.0 : 0.5)
-                            .animation(
-                                Animation.easeInOut(duration: 1.0)
-                                    .repeatForever(),
-                                value: audioRecorder.isRecording
-                            )
+                Spacer()
 
-                        Text("正在录音...")
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
+                // 右侧建议卡片
+                VStack {
+                    Spacer()
+
+                    SuggestionCard()
+
+                    Spacer()
                 }
             }
+            .padding(30)
+            // 底部控制按钮
+            BottomControlButtons()
+                .padding(.bottom, 40)
         }
-        .padding()
         .onAppear {
             audioRecorder.checkPermissionStatus()
-            // 如果没有权限，自动显示权限弹窗
             if !audioRecorder.hasPermission {
                 showPermissionModal = true
+            }
+
+            // 启动脉冲动画
+            withAnimation(
+                Animation.easeInOut(duration: 2.0).repeatForever(
+                    autoreverses: true
+                )
+            ) {
+                pulseAnimation = true
             }
         }
         .onChange(of: audioRecorder.hasPermission) { hasPermission in
@@ -85,14 +67,118 @@ struct ContentView: View {
                 showPermissionModal = false
             }
         }
-        .sheet(isPresented: $showPermissionModal) {
-            PermissionModalView(audioRecorder: audioRecorder)
-                .frame(width: 400, height: 500)
-                .interactiveDismissDisabled(true) // 防止用户手动关闭弹窗
+    }
+}
+
+// Listening 状态视图
+struct ListeningStatusView: View {
+    @Binding var isListening: Bool
+    @Binding var pulseAnimation: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Circle()
+                .fill(Color.primary)
+                .frame(width: 12, height: 12)
+                .scaleEffect(pulseAnimation ? 1.2 : 1.0)
+                .opacity(pulseAnimation ? 0.7 : 1.0)
+
+            Text("Listening...")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white)
+
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 18)
+        .background(
+            RoundedRectangle(cornerRadius: 25)
+                .fill(.regularMaterial)
+                .background(Color.black.opacity(0.3))
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 25))
+        // 边框渐变并且圆角
+        .overlay(
+            RoundedRectangle(cornerRadius: 25)
+                .stroke(
+                    LinearGradient(
+                        gradient: Gradient(colors: [.blue, .purple]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ),
+                    lineWidth: 2
+                )
+        )
+
+        Spacer()
+
+    }
+}
+
+// 建议卡片
+struct SuggestionCard: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            Text("Suggestion")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.white.opacity(0.8))
+
+            Text("Senior software engineer at Bananazon for 8 years")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.leading)
+        }
+        .padding(25)
+        .frame(maxWidth: 350)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.regularMaterial)
+                .background(Color.black.opacity(0.3))
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+}
+
+// 底部控制按钮
+struct BottomControlButtons: View {
+    var body: some View {
+        HStack(spacing: 18) {
+            // 麦克风按钮
+            Button(action: {}) {
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(.white)
+                    .frame(width: 60, height: 60)
+                    .background(Circle().fill(.regularMaterial))
+                    .background(Color.black.opacity(0.8))
+                    .clipShape(Circle())
+            }.buttonStyle(.plain)
+
+            // 中心按钮 (类似开关)
+            Button(action: {}) {
+                Image(systemName: "power")
+                    .font(.system(size: 24))
+                    .foregroundColor(.white)
+                    .frame(width: 60, height: 60)
+                    .background(Circle().fill(.regularMaterial))
+                    .background(Color.black.opacity(0.8))
+                    .clipShape(Circle())
+            }.buttonStyle(.plain)
+
+            // 摄像头按钮
+            Button(action: {}) {
+                Image(systemName: "video.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(.white)
+                    .frame(width: 60, height: 60)
+                    .background(Circle().fill(.regularMaterial))
+                    .background(Color.black.opacity(0.8))
+                    .clipShape(Circle())
+            }.buttonStyle(.plain)
         }
     }
 }
 
-#Preview(windowStyle: .automatic) {
+#Preview(windowStyle: .plain) {
     ContentView()
 }
