@@ -11,6 +11,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var audioRecorder = AudioRecorderManager()
+    @StateObject private var suggestionManager = SuggestionManager()
     @State private var showPermissionModal = false
 
     var body: some View {
@@ -32,11 +33,9 @@ struct ContentView: View {
                 VStack {
                     Spacer()
 
-                    SuggestionCard(suggestion: "建议 1")
-
-                    SuggestionCard(suggestion: "建议 1")
-
-                    SuggestionCard(suggestion: "建议 1")
+                    ForEach(Array(suggestionManager.getLatestThree().enumerated()), id: \.offset) { index, suggestion in
+                        SuggestionCard(suggestion: suggestion)
+                    }
 
                     Spacer()
                 }
@@ -53,6 +52,12 @@ struct ContentView: View {
             } else {
                 audioRecorder.startRecording()
             }
+            
+            // 添加一些示例建议来演示功能
+            suggestionManager.pushSuggestion("尝试使用更清晰的语音")
+            suggestionManager.pushSuggestion("靠近麦克风说话")
+            suggestionManager.pushSuggestion("减少背景噪音")
+            suggestionManager.pushSuggestion("说话速度可以稍微慢一些")
         }
         .onChange(of: audioRecorder.hasPermission) { oldValue, newValue in
             if !newValue {
