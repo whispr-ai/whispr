@@ -7,12 +7,14 @@
 
 import AVFoundation
 import Foundation
+import SwiftyJSON
 
 class DashScopeTranscriptionManager: NSObject, ObservableObject {
     @Published var tempText: String = ""
     @Published var globalText: String = ""
     @Published var isConnected = false
     @Published var connectionError: String?
+    @Published var isSentenceEnd: Bool = false
 
     private var webSocketTask: URLSessionWebSocketTask?
     private var urlSession: URLSession?
@@ -119,10 +121,11 @@ class DashScopeTranscriptionManager: NSObject, ObservableObject {
                     format: "pcm",
                     sampleRate: 16000,
                     languageHints: ["zh", "en"],
-                    disfluencyRemovalEnabled: false,
-                    semanticPunctuationEnabled: false,
+                    disfluencyRemovalEnabled: true,
+                    semanticPunctuationEnabled: true,
                     punctuationPredictionEnabled: true,
-                    inverseTextNormalizationEnabled: true
+                    inverseTextNormalizationEnabled: true,
+                    heartbeat: true,
                 ),
                 input: [:]
             )
@@ -228,67 +231,89 @@ class DashScopeTranscriptionManager: NSObject, ObservableObject {
     private func handleReceivedMessage(_ text: String) {
         print("📨 收到 DashScope 消息: \(text)")
 
-        let jsonData = Data(text.utf8)
-        do {
-            let response = try jsonDecoder.decode(
-                DashScopeEvent.self,
-                from: jsonData
-            )
+        guard let jsonData = text.data(using: .utf8) else {
+            print("❌ 无法将文本转换为 Data")
+            return
+        }
 
-            switch response.header.event {
-            case "task-started":
-                print("✅ 任务已开始")
-                taskStarted = true
+        let json = JSON(jsonData)
 
-            case "result-generated":
-                if let output = response.payload?.output,
-                    let sentence = output.sentence
-                {
-                    let transcript = sentence.text
+        // 检查是否解析成功
+        if json == JSON.null {
+            print("❌ JSON 解析失败")
+            return
+        }
 
-                    if !transcript.isEmpty {
-                        DispatchQueue.main.async {
-                            if sentence.endTime != nil {
-                                // 最终结果
-                                self.tempText = ""
-                                self.globalText += transcript + " "
-                                print("✅ 最终结果: \(transcript)")
-                            } else {
-                                // 中间结果
-                                self.tempText = transcript
-                                print("🔄 中间结果: \(transcript)")
-                            }
-                        }
-                    }
-                }
+        let event = json["header"]["event"].stringValue
 
-            case "task-finished":
-                print("✅ 任务已完成")
-                taskStarted = false
-                currentTaskId = nil
+        switch event {
+        case "task-started":
+            print("✅ 任务已开始")
+            taskStarted = true
 
-            case "task-failed":
-                print("❌ 任务失败")
-                if let errorCode = response.header.errorCode,
-                    let errorMessage = response.header.errorMessage
-                {
-                    print("错误码: \(errorCode), 错误信息: \(errorMessage)")
+        case "result-generated":
+            let sentence = json["payload"]["output"]["sentence"]
+
+            if sentence.exists() {
+                let transcript = sentence["text"].stringValue
+                let sentenceEnd = sentence["sentence_end"].boolValue
+
+                if !transcript.isEmpty {
                     DispatchQueue.main.async {
-                        self.connectionError = errorMessage
+                        if sentenceEnd {
+                            // 最终结果
+                            self.tempText = ""
+                            self.globalText += transcript + " "
+
+                            // 检查是否有 stash 数据
+                            let stash = sentence["stash"]
+                            if stash.exists() {
+                                let stashText = stash["text"].stringValue
+                                if !stashText.isEmpty {
+                                    self.tempText = stashText
+                                    print(
+                                        "✅ 最终结果: \(transcript) | 🔄 中间结果: \(stashText)"
+                                    )
+                                } else {
+                                    print("✅ 最终结果: \(transcript)")
+                                }
+                            } else {
+                                print("✅ 最终结果: \(transcript)")
+                            }
+                        } else {
+                            // 中间结果
+                            self.tempText = transcript
+                            print("🔄 中间结果: \(transcript)")
+                        }
+                        self.isSentenceEnd = sentenceEnd
                     }
                 }
-                taskStarted = false
-                currentTaskId = nil
-                DispatchQueue.main.async {
-                    self.isConnected = false
-                }
-
-            default:
-                print("🔍 未知事件类型: \(response.header.event ?? "unknown")")
             }
 
-        } catch {
-            print("❌ 解析 DashScope 消息失败: \(error.localizedDescription)")
+        case "task-finished":
+            print("✅ 任务已完成")
+            taskStarted = false
+            currentTaskId = nil
+
+        case "task-failed":
+            print("❌ 任务失败")
+            let errorCode = json["header"]["error_code"].stringValue
+            let errorMessage = json["header"]["error_message"].stringValue
+
+            if !errorCode.isEmpty && !errorMessage.isEmpty {
+                print("错误码: \(errorCode), 错误信息: \(errorMessage)")
+                DispatchQueue.main.async {
+                    self.connectionError = errorMessage
+                }
+            }
+            taskStarted = false
+            currentTaskId = nil
+            DispatchQueue.main.async {
+                self.isConnected = false
+            }
+
+        default:
+            print("🔍 未知事件类型: \(event)")
         }
     }
 }
@@ -385,6 +410,7 @@ struct TaskParameters: Codable {
     let semanticPunctuationEnabled: Bool?
     let punctuationPredictionEnabled: Bool?
     let inverseTextNormalizationEnabled: Bool?
+    let heartbeat: Bool?
 
     enum CodingKeys: String, CodingKey {
         case format
@@ -395,72 +421,6 @@ struct TaskParameters: Codable {
         case punctuationPredictionEnabled = "punctuation_prediction_enabled"
         case inverseTextNormalizationEnabled =
             "inverse_text_normalization_enabled"
-    }
-}
-
-// Response Events
-struct DashScopeEvent: Codable {
-    let header: EventHeader
-    let payload: EventPayload?
-}
-
-struct EventHeader: Codable {
-    let taskId: String?
-    let event: String?
-    let errorCode: String?
-    let errorMessage: String?
-    let attributes: [String: String]?
-
-    enum CodingKeys: String, CodingKey {
-        case taskId = "task_id"
-        case event
-        case errorCode = "error_code"
-        case errorMessage = "error_message"
-        case attributes
-    }
-}
-
-struct EventPayload: Codable {
-    let output: EventOutput?
-    let usage: String?
-}
-
-struct EventOutput: Codable {
-    let sentence: Sentence?
-}
-
-struct Sentence: Codable {
-    let beginTime: Int?
-    let endTime: Int?
-    let text: String
-    let words: [Word]?
-    let heartbeat: Bool?
-    let sentenceEnd: Bool?
-    let emoTag: String?
-    let emoConfidence: Double?
-
-    enum CodingKeys: String, CodingKey {
-        case beginTime = "begin_time"
-        case endTime = "end_time"
-        case text
-        case words
         case heartbeat
-        case sentenceEnd = "sentence_end"
-        case emoTag = "emo_tag"
-        case emoConfidence = "emo_confidence"
-    }
-}
-
-struct Word: Codable {
-    let beginTime: Int
-    let endTime: Int
-    let text: String
-    let punctuation: String
-
-    enum CodingKeys: String, CodingKey {
-        case beginTime = "begin_time"
-        case endTime = "end_time"
-        case text
-        case punctuation
     }
 }

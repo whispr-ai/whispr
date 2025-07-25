@@ -14,19 +14,41 @@ struct SubTitleView: View {
     @ObservedObject var transcriptionManager: DashScopeTranscriptionManager
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                if !transcriptionManager.globalText.isEmpty {
-                    Text(transcriptionManager.globalText)
-                        .font(.system(size: 17))
-                        .foregroundColor(.white.opacity(0.4))
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(
+                        transcriptionManager.isSentenceEnd
+                            ? transcriptionManager.globalText
+                            : transcriptionManager.globalText
+                                + transcriptionManager.tempText
+                    )
+                    .font(.system(size: 17))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                    // 添加一个底部spacer，确保文本能真正滚动到最底部
+                    Spacer()
+                        .frame(height: 1)
+                        .id("bottomText")
+
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(16)
+            }
+            .onChange(of: transcriptionManager.globalText) { _, _ in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    proxy.scrollTo("bottomText", anchor: .top)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .onChange(of: transcriptionManager.tempText) { _, _ in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    proxy.scrollTo("bottomText", anchor: .top)
+                }
+            }
         }
-        .frame(height: 100)
+        .frame(height: 150)
         .mask(
             // 创建渐变遮罩，中间完全显示，上下边缘淡出
             LinearGradient(

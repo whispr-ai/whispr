@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		70A9479E2E2FE788002D6558 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 70A9479D2E2FE788002D6558 /* RealityKitContent */; };
+		70B14A0E2E33E7BD00AFA21A /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 70B14A0D2E33E7BD00AFA21A /* SwiftyJSON */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70B14A0E2E33E7BD00AFA21A /* SwiftyJSON in Frameworks */,
 				70A9479E2E2FE788002D6558 /* RealityKitContent in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -77,6 +79,7 @@
 				70A9479A2E2FE788002D6558 /* whispr */,
 				70A9479B2E2FE788002D6558 /* Packages */,
 				70A947AD2E2FE78A002D6558 /* whisprTests */,
+				70B14A0C2E33E7BD00AFA21A /* Frameworks */,
 				70A947992E2FE788002D6558 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -96,6 +99,13 @@
 				70A9479C2E2FE788002D6558 /* RealityKitContent */,
 			);
 			path = Packages;
+			sourceTree = "<group>";
+		};
+		70B14A0C2E33E7BD00AFA21A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -119,6 +129,7 @@
 			name = whispr;
 			packageProductDependencies = (
 				70A9479D2E2FE788002D6558 /* RealityKitContent */,
+				70B14A0D2E33E7BD00AFA21A /* SwiftyJSON */,
 			);
 			productName = whispr;
 			productReference = 70A947982E2FE788002D6558 /* whispr.app */;
@@ -175,6 +186,9 @@
 			);
 			mainGroup = 70A9478F2E2FE788002D6558;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				70B14A0B2E33E7AD00AFA21A /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 70A947992E2FE788002D6558 /* Products */;
 			projectDirPath = "";
@@ -472,10 +486,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		70B14A0B2E33E7AD00AFA21A /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		70A9479D2E2FE788002D6558 /* RealityKitContent */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RealityKitContent;
+		};
+		70B14A0D2E33E7BD00AFA21A /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 70B14A0B2E33E7AD00AFA21A /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
