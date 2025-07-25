@@ -8,16 +8,26 @@
 import SwiftUI
 
 struct BottomControlButtonsView: View {
+    @ObservedObject var audioRecorder: AudioRecorderManager
+
     var body: some View {
         HStack(spacing: 18) {
             // 麦克风按钮
-            Button(action: {}) {
+            Button(action: {
+                audioRecorder.toggleRecording()
+            }) {
                 Image(systemName: "mic.fill")
                     .font(.system(size: 24))
                     .foregroundColor(.white)
                     .frame(width: 60, height: 60)
                     .background(Circle().fill(.regularMaterial))
-                    .background(Color.black.opacity(0.8))
+                    .background(
+                        Circle().fill(
+                            audioRecorder.isRecording
+                                ? Color.green.opacity(0.8)
+                                : Color.black.opacity(0.8)
+                        )
+                    )
                     .clipShape(Circle())
             }.buttonStyle(.plain)
 
@@ -37,5 +47,5 @@ struct BottomControlButtonsView: View {
 }
 
 #Preview {
-    BottomControlButtonsView()
+    BottomControlButtonsView(audioRecorder: AudioRecorderManager())
 }

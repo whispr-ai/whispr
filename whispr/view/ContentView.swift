@@ -45,7 +45,7 @@ struct ContentView: View {
             }
             .padding(30)
             // 底部控制按钮
-            BottomControlButtonsView()
+            BottomControlButtonsView(audioRecorder: audioRecorder)
                 .padding(.bottom, 40)
         }
         .onAppear {
@@ -55,6 +55,10 @@ struct ContentView: View {
             } else {
                 audioRecorder.startRecording()
             }
+
+            suggestionManager.pushSuggestion(
+                "Welcome to whispr! Tap the button below to start listening."
+            )
         }
         .onChange(of: audioRecorder.hasPermission) { oldValue, newValue in
             if !newValue {

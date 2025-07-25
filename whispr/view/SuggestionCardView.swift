@@ -13,7 +13,7 @@ struct SuggestionCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Suggestion")
+            Text("建议")
                 .font(.headline)
                 .foregroundColor(.primary)
 
