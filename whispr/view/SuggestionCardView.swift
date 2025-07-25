@@ -13,17 +13,22 @@ struct SuggestionCard: View {
             Text("Suggestion")
                 .font(.headline)
                 .foregroundColor(.primary)
-            
-            Text("This is a suggestion card that provides helpful information or recommendations to the user.")
-                .font(.body)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.leading)
+
+            Text(
+                "This is a suggestion card that provides helpful information or recommendations to the user."
+            )
+            .font(.body)
+            .foregroundColor(.secondary)
+            .multilineTextAlignment(.leading)
         }
-        .padding(20)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
-        .frame(width: 300)
+        .padding(25)
+        .frame(maxWidth: 350)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.regularMaterial)
+                .background(Color.black.opacity(0.3))
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 
