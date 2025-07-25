@@ -45,7 +45,7 @@ struct ContentView: View {
             }
             .padding(30)
             // 底部控制按钮
-            BottomControlButtons()
+            BottomControlButtonsView()
                 .padding(.bottom, 40)
         }
         .onAppear {
@@ -62,36 +62,6 @@ struct ContentView: View {
             } else {
                 showPermissionModal = false
             }
-        }
-    }
-}
-
-// 底部控制按钮
-struct BottomControlButtons: View {
-    var body: some View {
-        HStack(spacing: 18) {
-            // 麦克风按钮
-            Button(action: {}) {
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(.white)
-                    .frame(width: 60, height: 60)
-                    .background(Circle().fill(.regularMaterial))
-                    .background(Color.black.opacity(0.8))
-                    .clipShape(Circle())
-            }.buttonStyle(.plain)
-
-            // 中心按钮 (类似开关)
-            Button(action: {
-            }) {
-                Image(systemName: "power")
-                    .font(.system(size: 24))
-                    .foregroundColor(.white)
-                    .frame(width: 60, height: 60)
-                    .background(Circle().fill(.regularMaterial))
-                    .background(Color.black.opacity(0.8))
-                    .clipShape(Circle())
-            }.buttonStyle(.plain)
         }
     }
 }
