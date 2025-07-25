@@ -30,9 +30,10 @@ struct BottomControlButtonsView: View {
                         )
                     )
                     .clipShape(Circle())
-            }.buttonStyle(.plain)
+            }.help(audioRecorder.isRecording ? "停止" : "开始聆听")
+                .buttonStyle(.plain)
 
-            // 中心按钮 (类似开关)
+            // 清屏按钮 (类似开关)
             Button(action: {
                 audioRecorder.transcriptionManager.clear()
                 suggestion.clear()
@@ -44,7 +45,9 @@ struct BottomControlButtonsView: View {
                     .background(Circle().fill(.regularMaterial))
                     .background(Color.red.opacity(1))
                     .clipShape(Circle())
-            }.buttonStyle(.plain)
+            }.help("清屏")
+                .buttonStyle(.plain)
+
         }
     }
 }

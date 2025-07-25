@@ -30,7 +30,7 @@ struct ImmersiveView: View {
                 if let uiEntity = attachments.entity(for: "contentView") {
                     followRoot.addChild(uiEntity)
                     uiEntity.setPosition(
-                        [0, -0.05, -1],
+                        [0, -0.08, -1],
                         relativeTo: followRoot
                     )
                 }
