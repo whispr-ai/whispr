@@ -69,6 +69,11 @@
             value = "cf02bee37485040c4fd06428294218b005bf301e"
             isEnabled = "YES">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "DASHSCOPE_API_KEY"
+            value = "sk-7bb3329ec06b4da08982b62fc9f885a3"
+            isEnabled = "YES">
+         </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction

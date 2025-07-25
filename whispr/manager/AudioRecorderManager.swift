@@ -20,7 +20,7 @@ class AudioRecorderManager: NSObject, ObservableObject {
     private let audioSession = AVAudioSession.sharedInstance()
 
     // Deepgram WebSocket 管理器 - 公开访问
-    let transcriptionManager = DeepgramTranscriptionManager()
+    let transcriptionManager = DashScopeTranscriptionManager()
 
     override init() {
         super.init()
@@ -53,7 +53,8 @@ class AudioRecorderManager: NSObject, ObservableObject {
     }
 
     func requestPermission() {
-        AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
+        AVAudioSession.sharedInstance().requestRecordPermission {
+            [weak self] granted in
             DispatchQueue.main.async {
                 self?.hasPermission = granted
                 self?.permissionStatus = granted ? "已授权" : "已拒绝"
@@ -77,13 +78,13 @@ class AudioRecorderManager: NSObject, ObservableObject {
             )
 
             // 连接到 OpenAI WebSocket
-            transcriptionManager.connectToDeepgram()
+            transcriptionManager.connect()
 
             // 启动音频引擎进行实时流传输
             try startAudioStreaming()
 
-//            // 同时启动文件录音（可选）
-//            try startFileRecording()
+            //            // 同时启动文件录音（可选）
+            //            try startFileRecording()
 
             isRecording = true
             print("✅ 开始录音和实时转录")
@@ -139,7 +140,7 @@ class AudioRecorderManager: NSObject, ObservableObject {
         guard
             let intermediateFormat = AVAudioFormat(
                 commonFormat: .pcmFormatFloat32,
-                sampleRate: validInputFormat.sampleRate, // 保持输入采样率
+                sampleRate: validInputFormat.sampleRate,  // 保持输入采样率
                 channels: validInputFormat.channelCount,  // 保持输入声道数
                 interleaved: false
             )
@@ -165,7 +166,7 @@ class AudioRecorderManager: NSObject, ObservableObject {
         converterNode.installTap(
             onBus: 0,
             bufferSize: 1024,
-            format: intermediateFormat // 使用与输入兼容的格式
+            format: intermediateFormat  // 使用与输入兼容的格式
         ) { [weak self] buffer, time in
             // 在这里进行格式转换到 Deepgram 要求的格式
             if let convertedData = self?.convertBufferToDeepgramFormat(buffer) {
@@ -179,7 +180,11 @@ class AudioRecorderManager: NSObject, ObservableObject {
             to: converterNode,
             format: validInputFormat
         )
-        audioEngine.connect(converterNode, to: sinkNode, format: intermediateFormat)
+        audioEngine.connect(
+            converterNode,
+            to: sinkNode,
+            format: intermediateFormat
+        )
 
         print("🔗 音频节点连接完成")
         audioEngine.prepare()
@@ -190,36 +195,53 @@ class AudioRecorderManager: NSObject, ObservableObject {
     }
 
     // 新增：将音频缓冲区转换为 Deepgram 要求的格式
-    private func convertBufferToDeepgramFormat(_ inputBuffer: AVAudioPCMBuffer) -> Data? {
+    private func convertBufferToDeepgramFormat(_ inputBuffer: AVAudioPCMBuffer)
+        -> Data?
+    {
         // 创建 Deepgram 要求的输出格式
-        guard let outputFormat = AVAudioFormat(
-            commonFormat: .pcmFormatInt16,
-            sampleRate: 16000,
-            channels: 1,
-            interleaved: true
-        ) else {
+        guard
+            let outputFormat = AVAudioFormat(
+                commonFormat: .pcmFormatInt16,
+                sampleRate: 16000,
+                channels: 1,
+                interleaved: true
+            )
+        else {
             print("❌ 无法创建 Deepgram 输出格式")
             return nil
         }
 
         // 创建音频转换器
-        guard let converter = AVAudioConverter(from: inputBuffer.format, to: outputFormat) else {
+        guard
+            let converter = AVAudioConverter(
+                from: inputBuffer.format,
+                to: outputFormat
+            )
+        else {
             print("❌ 无法创建音频转换器")
             return nil
         }
 
         // 计算输出缓冲区大小
         let outputCapacity = AVAudioFrameCount(
-            Double(inputBuffer.frameLength) * (outputFormat.sampleRate / inputBuffer.format.sampleRate)
+            Double(inputBuffer.frameLength)
+                * (outputFormat.sampleRate / inputBuffer.format.sampleRate)
         )
 
-        guard let outputBuffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: outputCapacity) else {
+        guard
+            let outputBuffer = AVAudioPCMBuffer(
+                pcmFormat: outputFormat,
+                frameCapacity: outputCapacity
+            )
+        else {
             print("❌ 无法创建输出缓冲区")
             return nil
         }
 
         var error: NSError?
-        let status = converter.convert(to: outputBuffer, error: &error) { _, outStatus in
+        let status = converter.convert(to: outputBuffer, error: &error) {
+            _,
+            outStatus in
             outStatus.pointee = .haveData
             return inputBuffer
         }

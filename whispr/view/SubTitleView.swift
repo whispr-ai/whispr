@@ -11,7 +11,7 @@ import SwiftUI
 
 struct SubTitleView: View {
 
-    @ObservedObject var transcriptionManager: DeepgramTranscriptionManager
+    @ObservedObject var transcriptionManager: DashScopeTranscriptionManager
 
     var body: some View {
         ScrollView {
