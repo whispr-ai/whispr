@@ -20,7 +20,7 @@ struct ContentView: View {
                 VStack(spacing: 20) {
                     // Listening 状态条
                     ListeningStatusView(
-                        isListening: audioRecorder.isRecording,
+                        status: audioRecorder.isRecording ? .listening : .stop
                     )
                     Spacer()
                 }

@@ -8,19 +8,25 @@ import RealityKit
 import RealityKitContent
 import SwiftUI
 
+enum ListeningStatus {
+    case listening
+    case pause
+    case stop
+}
+
 struct ListeningStatusView: View {
-    let isListening: Bool
+    let status: ListeningStatus
     @State private var pulseAnimation: Bool = false
 
     var body: some View {
         HStack(spacing: 10) {
             Circle()
-                .fill(isListening ? Color.green : Color.gray)
+                .fill(circleColor)
                 .frame(width: 12, height: 12)
-                .scaleEffect(isListening && pulseAnimation ? 1.2 : 1.0)
-                .opacity(isListening && pulseAnimation ? 0.7 : 1.0)
+                .scaleEffect(shouldPulse ? 1.2 : 1.0)
+                .opacity(shouldPulse ? 0.7 : 1.0)
 
-            Text(isListening ? "Listening..." : "Ready to listen")
+            Text(statusText)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.white)
 
@@ -39,11 +45,7 @@ struct ListeningStatusView: View {
             RoundedRectangle(cornerRadius: 25)
                 .stroke(
                     LinearGradient(
-                        gradient: Gradient(
-                            colors: isListening
-                                ? [.blue, .purple]
-                                : [.gray, .gray.opacity(0.5)]
-                        ),
+                        gradient: Gradient(colors: borderColors),
                         startPoint: .leading,
                         endPoint: .trailing
                     ),
@@ -51,33 +53,70 @@ struct ListeningStatusView: View {
                 )
         )
         .onAppear {
-            if isListening {
-                withAnimation(
-                    Animation.easeInOut(duration: 2.0).repeatForever(
-                        autoreverses: true
-                    )
-                ) {
-                    pulseAnimation = true
-                }
-            }
+            updateAnimation()
         }
-        .onChange(of: isListening) { newValue in
-            if newValue {
-                withAnimation(
-                    Animation.easeInOut(duration: 2.0).repeatForever(
-                        autoreverses: true
-                    )
-                ) {
-                    pulseAnimation = true
-                }
-            } else {
-                withAnimation(.easeOut(duration: 0.3)) {
-                    pulseAnimation = false
-                }
-            }
+        .onChange(of: status) {
+            updateAnimation()
         }
 
         Spacer()
-
+    }
+    
+    // MARK: - Computed Properties
+    
+    private var circleColor: Color {
+        switch status {
+        case .listening:
+            return .green
+        case .pause:
+            return .orange
+        case .stop:
+            return .gray
+        }
+    }
+    
+    private var statusText: String {
+        switch status {
+        case .listening:
+            return "Listening..."
+        case .pause:
+            return "You are looking suggestions"
+        case .stop:
+            return "Ready to listen"
+        }
+    }
+    
+    private var borderColors: [Color] {
+        switch status {
+        case .listening:
+            return [.blue, .purple]
+        case .pause:
+            return [.orange, .yellow]
+        case .stop:
+            return [.gray, .gray.opacity(0.5)]
+        }
+    }
+    
+    private var shouldPulse: Bool {
+        return status == .listening && pulseAnimation
+    }
+    
+    // MARK: - Animation Control
+    
+    private func updateAnimation() {
+        switch status {
+        case .listening:
+            withAnimation(
+                Animation.easeInOut(duration: 2.0).repeatForever(
+                    autoreverses: true
+                )
+            ) {
+                pulseAnimation = true
+            }
+        case .pause, .stop:
+            withAnimation(.easeOut(duration: 0.3)) {
+                pulseAnimation = false
+            }
+        }
     }
 }
