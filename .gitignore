@@ -90,10 +90,10 @@ fastlane/test_output
 iOSInjectionProject/
 
 # API Keys and sensitive configuration
-*.xcscheme
-!*.xcscheme.template
-whispr.xcodeproj/xcshareddata/xcschemes/
-!whispr.xcodeproj/xcshareddata/xcschemes/*.template
+# *.xcscheme
+# !*.xcscheme.template
+# whispr.xcodeproj/xcshareddata/xcschemes/
+# !whispr.xcodeproj/xcshareddata/xcschemes/*.template
 API_KEY_SETUP.md
 
 # Mac specific
