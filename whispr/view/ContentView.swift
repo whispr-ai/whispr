@@ -48,37 +48,13 @@ struct ContentView: View {
                 showPermissionModal = true
             }
         }
-        .onChange(of: audioRecorder.hasPermission) { hasPermission in
-            if !hasPermission {
+        .onChange(of: audioRecorder.hasPermission) { oldValue, newValue in
+            if !newValue {
                 showPermissionModal = true
             } else {
                 showPermissionModal = false
             }
         }
-    }
-}
-
-// 建议卡片
-struct SuggestionCard: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            Text("Suggestion")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white.opacity(0.8))
-
-            Text("Senior software engineer at Bananazon for 8 years")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.leading)
-        }
-        .padding(25)
-        .frame(maxWidth: 350)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(.regularMaterial)
-                .background(Color.black.opacity(0.3))
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 
