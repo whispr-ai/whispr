@@ -82,8 +82,8 @@ class AudioRecorderManager: NSObject, ObservableObject {
             // 启动音频引擎进行实时流传输
             try startAudioStreaming()
 
-            // 同时启动文件录音（可选）
-            try startFileRecording()
+//            // 同时启动文件录音（可选）
+//            try startFileRecording()
 
             isRecording = true
             print("✅ 开始录音和实时转录")

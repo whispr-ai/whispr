@@ -37,7 +37,7 @@ struct ListeningStatusView: View {
         .background(
             RoundedRectangle(cornerRadius: 25)
                 .fill(.regularMaterial)
-                .background(Color.black.opacity(0.3))
+                .background(Color.black.opacity(0.5))
         )
         .clipShape(RoundedRectangle(cornerRadius: 25))
         // 边框渐变并且圆角
@@ -61,9 +61,9 @@ struct ListeningStatusView: View {
 
         Spacer()
     }
-    
+
     // MARK: - Computed Properties
-    
+
     private var circleColor: Color {
         switch status {
         case .listening:
@@ -74,7 +74,7 @@ struct ListeningStatusView: View {
             return .gray
         }
     }
-    
+
     private var statusText: String {
         switch status {
         case .listening:
@@ -85,7 +85,7 @@ struct ListeningStatusView: View {
             return "Ready to listen"
         }
     }
-    
+
     private var borderColors: [Color] {
         switch status {
         case .listening:
@@ -96,13 +96,13 @@ struct ListeningStatusView: View {
             return [.gray, .gray.opacity(0.5)]
         }
     }
-    
+
     private var shouldPulse: Bool {
         return status == .listening && pulseAnimation
     }
-    
+
     // MARK: - Animation Control
-    
+
     private func updateAnimation() {
         switch status {
         case .listening:

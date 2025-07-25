@@ -32,7 +32,11 @@ struct ContentView: View {
                 VStack {
                     Spacer()
 
-                    SuggestionCard()
+                    SuggestionCard(suggestion: "建议 1")
+
+                    SuggestionCard(suggestion: "建议 1")
+
+                    SuggestionCard(suggestion: "建议 1")
 
                     Spacer()
                 }
@@ -46,6 +50,8 @@ struct ContentView: View {
             audioRecorder.checkPermissionStatus()
             if !audioRecorder.hasPermission {
                 showPermissionModal = true
+            } else {
+                audioRecorder.startRecording()
             }
         }
         .onChange(of: audioRecorder.hasPermission) { oldValue, newValue in
