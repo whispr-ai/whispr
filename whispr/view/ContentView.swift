@@ -33,7 +33,10 @@ struct ContentView: View {
                 VStack {
                     Spacer()
 
-                    ForEach(Array(suggestionManager.getLatestThree().enumerated()), id: \.offset) { index, suggestion in
+                    ForEach(
+                        Array(suggestionManager.getLatestThree().enumerated()),
+                        id: \.offset
+                    ) { index, suggestion in
                         SuggestionCard(suggestion: suggestion)
                     }
 
@@ -52,12 +55,6 @@ struct ContentView: View {
             } else {
                 audioRecorder.startRecording()
             }
-            
-            // 添加一些示例建议来演示功能
-            suggestionManager.pushSuggestion("尝试使用更清晰的语音")
-            suggestionManager.pushSuggestion("靠近麦克风说话")
-            suggestionManager.pushSuggestion("减少背景噪音")
-            suggestionManager.pushSuggestion("说话速度可以稍微慢一些")
         }
         .onChange(of: audioRecorder.hasPermission) { oldValue, newValue in
             if !newValue {
@@ -85,19 +82,9 @@ struct BottomControlButtons: View {
             }.buttonStyle(.plain)
 
             // 中心按钮 (类似开关)
-            Button(action: {}) {
+            Button(action: {
+            }) {
                 Image(systemName: "power")
-                    .font(.system(size: 24))
-                    .foregroundColor(.white)
-                    .frame(width: 60, height: 60)
-                    .background(Circle().fill(.regularMaterial))
-                    .background(Color.black.opacity(0.8))
-                    .clipShape(Circle())
-            }.buttonStyle(.plain)
-
-            // 摄像头按钮
-            Button(action: {}) {
-                Image(systemName: "video.fill")
                     .font(.system(size: 24))
                     .foregroundColor(.white)
                     .frame(width: 60, height: 60)

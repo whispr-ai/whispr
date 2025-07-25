@@ -78,11 +78,11 @@ struct ListeningStatusView: View {
     private var statusText: String {
         switch status {
         case .listening:
-            return "Listening..."
+            return "正在聆听..."
         case .pause:
-            return "You are looking suggestions"
+            return "你正在查看建议"
         case .stop:
-            return "Ready to listen"
+            return "随时准备好开始聆听！"
         }
     }
 
