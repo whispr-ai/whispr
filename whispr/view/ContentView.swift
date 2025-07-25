@@ -19,11 +19,17 @@ struct ContentView: View {
             HStack(spacing: 20) {
                 // 左侧面板
                 VStack(spacing: 20) {
-                    // Listening 状态条
+
                     ListeningStatusView(
-                        status: audioRecorder.isRecording ? .listening : .stop
+                        status: audioRecorder.isRecording ? .listening : .stop,
                     )
+
                     Spacer()
+
+                    SubTitleView(
+                        transcriptionManager: audioRecorder.transcriptionManager
+                    )
+
                 }
                 .frame(width: 300)
 
@@ -53,7 +59,7 @@ struct ContentView: View {
             if !audioRecorder.hasPermission {
                 showPermissionModal = true
             } else {
-                audioRecorder.startRecording()
+                //                audioRecorder.startRecording()
             }
 
             suggestionManager.pushSuggestion(

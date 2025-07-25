@@ -19,39 +19,41 @@ struct ListeningStatusView: View {
     @State private var pulseAnimation: Bool = false
 
     var body: some View {
-        HStack(spacing: 10) {
-            Circle()
-                .fill(circleColor)
-                .frame(width: 12, height: 12)
-                .scaleEffect(shouldPulse ? 1.2 : 1.0)
-                .opacity(shouldPulse ? 0.7 : 1.0)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Circle()
+                    .fill(circleColor)
+                    .frame(width: 12, height: 12)
+                    .scaleEffect(shouldPulse ? 1.2 : 1.0)
+                    .opacity(shouldPulse ? 0.7 : 1.0)
 
-            Text(statusText)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white)
+                Text(statusText)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
 
-            Spacer()
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 18)
+            .background(
+                RoundedRectangle(cornerRadius: 25)
+                    .fill(.regularMaterial)
+                    .background(Color.black.opacity(0.5))
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 25))
+            // 边框渐变并且圆角
+            .overlay(
+                RoundedRectangle(cornerRadius: 25)
+                    .stroke(
+                        LinearGradient(
+                            gradient: Gradient(colors: borderColors),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 2
+                    )
+            )
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 18)
-        .background(
-            RoundedRectangle(cornerRadius: 25)
-                .fill(.regularMaterial)
-                .background(Color.black.opacity(0.5))
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 25))
-        // 边框渐变并且圆角
-        .overlay(
-            RoundedRectangle(cornerRadius: 25)
-                .stroke(
-                    LinearGradient(
-                        gradient: Gradient(colors: borderColors),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 2
-                )
-        )
         .onAppear {
             updateAnimation()
         }
@@ -119,4 +121,10 @@ struct ListeningStatusView: View {
             }
         }
     }
+}
+
+#Preview {
+    ListeningStatusView(
+        status: .listening
+    )
 }

@@ -51,7 +51,7 @@ class DeepgramTranscriptionManager: NSObject, ObservableObject {
     func connectToDeepgram() {
         // 参考 UIKit 代码的 URL 和参数设置
         let urlString =
-            "wss://api.deepgram.com/v1/listen?encoding=linear16&sample_rate=16000&channels=1&model=nova-2&smart_format=true&filler_words=true&language=zh&interim_results=true"
+            "wss://api.deepgram.com/v1/listen?encoding=linear16&sample_rate=16000&channels=1&model=nova-3&smart_format=true&punctuate=true&filler_words=true&language=en&interim_results=true"
 
         guard let url = URL(string: urlString) else {
             print("❌ 无效的 WebSocket URL")
@@ -138,12 +138,12 @@ class DeepgramTranscriptionManager: NSObject, ObservableObject {
                 response.channel.alternatives.first?.transcript ?? ""
 
             if !transcript.isEmpty {
-                self.tempText = transcript
                 if response.isFinal {
                     DispatchQueue.main.async {
-                        self.globalText = self.globalText + transcript
+                        self.tempText = transcript
+                        self.globalText = self.globalText + transcript + " "
                     }
-                    print("✅ 最终转录: \(self.tempText)")
+                    print("✅ 最终 globalText: \(self.globalText)")
                 }
                 print("过程转录：\(self.tempText)")
             }
