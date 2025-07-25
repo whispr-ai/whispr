@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BottomControlButtonsView: View {
     @ObservedObject var audioRecorder: AudioRecorderManager
+    @ObservedObject var suggestion: SuggestionManager
 
     var body: some View {
         HStack(spacing: 18) {
@@ -24,8 +25,8 @@ struct BottomControlButtonsView: View {
                     .background(
                         Circle().fill(
                             audioRecorder.isRecording
-                                ? Color.green.opacity(0.8)
-                                : Color.black.opacity(0.8)
+                                ? Color.green.opacity(1)
+                                : Color.black.opacity(1)
                         )
                     )
                     .clipShape(Circle())
@@ -33,13 +34,15 @@ struct BottomControlButtonsView: View {
 
             // 中心按钮 (类似开关)
             Button(action: {
+                audioRecorder.transcriptionManager.clear()
+                suggestion.clear()
             }) {
-                Image(systemName: "power")
+                Image(systemName: "xmark")
                     .font(.system(size: 24))
                     .foregroundColor(.white)
                     .frame(width: 60, height: 60)
                     .background(Circle().fill(.regularMaterial))
-                    .background(Color.black.opacity(0.8))
+                    .background(Color.red.opacity(1))
                     .clipShape(Circle())
             }.buttonStyle(.plain)
         }
@@ -47,5 +50,8 @@ struct BottomControlButtonsView: View {
 }
 
 #Preview {
-    BottomControlButtonsView(audioRecorder: AudioRecorderManager())
+    BottomControlButtonsView(
+        audioRecorder: AudioRecorderManager(),
+        suggestion: SuggestionManager()
+    )
 }

@@ -316,6 +316,28 @@ class DashScopeTranscriptionManager: NSObject, ObservableObject {
             print("🔍 未知事件类型: \(event)")
         }
     }
+
+    // MARK: - Clean Method
+
+    func clear() {
+        // 断开连接
+        disconnect()
+
+        // 重置所有状态到初始值
+        DispatchQueue.main.async {
+            self.tempText = ""
+            self.globalText = ""
+            self.isConnected = false
+            self.connectionError = nil
+            self.isSentenceEnd = false
+        }
+
+        // 重置内部状态
+        self.currentTaskId = nil
+        self.taskStarted = false
+
+        print("🧹 DashScopeTranscriptionManager 已清空并重置到初始状态")
+    }
 }
 
 // MARK: - URLSessionWebSocketDelegate

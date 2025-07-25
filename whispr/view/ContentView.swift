@@ -51,8 +51,11 @@ struct ContentView: View {
             }
             .padding(30)
             // 底部控制按钮
-            BottomControlButtonsView(audioRecorder: audioRecorder)
-                .padding(.bottom, 40)
+            BottomControlButtonsView(
+                audioRecorder: audioRecorder,
+                suggestion: suggestionManager
+            )
+            .padding(.bottom, 40)
         }
         .onAppear {
             audioRecorder.checkPermissionStatus()
