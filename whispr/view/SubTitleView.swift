@@ -64,9 +64,9 @@ struct SubTitleView: View {
                 endPoint: .bottom
             )
         ).hoverEffect { effect, isActive, _ in
-            effect.scaleEffect(isActive ? 1.2 : 1)
+            effect.scaleEffect(isActive ? 1.05 : 1)
         }.hoverEffect { effect, isActive, _ in
-            effect.opacity(isActive ? 1 : 0.4)
+            effect.opacity(isActive ? 1 : 0.3)
         }
     }
 }

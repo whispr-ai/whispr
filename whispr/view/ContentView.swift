@@ -31,7 +31,7 @@ struct ContentView: View {
         VStack {
             HStack(spacing: 20) {
                 // 左侧面板
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 20) {
 
                     ListeningStatusView(
                         status: audioRecorderManager.isRecording
