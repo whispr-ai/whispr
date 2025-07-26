@@ -15,6 +15,7 @@ enum ListeningStatus {
 }
 
 struct ListeningStatusView: View {
+
     let status: ListeningStatus
     @State private var pulseAnimation: Bool = false
 

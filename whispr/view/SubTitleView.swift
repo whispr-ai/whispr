@@ -11,7 +11,7 @@ import SwiftUI
 
 struct SubTitleView: View {
 
-    @ObservedObject var transcriptionManager: DashScopeTranscriptionManager
+    @Environment(DashScopeTranscriptionManager.self) var transcriptionManager
 
     var body: some View {
         ScrollViewReader { proxy in

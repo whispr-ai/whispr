@@ -10,9 +10,9 @@ import RealityKitContent
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var audioRecorder = AudioRecorderManager()
-    @StateObject private var suggestionManager = SuggestionManager()
-    @StateObject private var difyManager = DifyManager()
+
+    @Environment(AudioRecorderManager.self) var audioRecorderManager
+    @Environment(SuggestionManager.self) var suggestionManager
 
     @State private var showPermissionModal = false
 
@@ -23,14 +23,13 @@ struct ContentView: View {
                 VStack(spacing: 20) {
 
                     ListeningStatusView(
-                        status: audioRecorder.isRecording ? .listening : .stop,
+                        status: audioRecorderManager.isRecording
+                            ? .listening : .stop,
                     )
 
                     Spacer()
 
-                    SubTitleView(
-                        transcriptionManager: audioRecorder.transcriptionManager
-                    )
+                    SubTitleView()
 
                 }
                 .frame(width: 300)
@@ -42,7 +41,10 @@ struct ContentView: View {
                     Spacer()
 
                     ForEach(
-                        Array(suggestionManager.getLatestThree().enumerated()),
+                        Array(
+                            suggestionManager.getLatestThree()
+                                .enumerated()
+                        ),
                         id: \.offset
                     ) { index, suggestion in
                         SuggestionCard(suggestion: suggestion)
@@ -53,21 +55,22 @@ struct ContentView: View {
             }
             .padding(30)
             // 底部控制按钮
-            BottomControlButtonsView(
-                audioRecorder: audioRecorder,
-                suggestion: suggestionManager
-            )
-            .padding(.bottom, 40)
+            BottomControlButtonsView()
+                .padding(.bottom, 40)
         }
         .onAppear {
-            audioRecorder.checkPermissionStatus()
-            if !audioRecorder.hasPermission {
+            audioRecorderManager.checkPermissionStatus()
+            if !audioRecorderManager.hasPermission {
                 showPermissionModal = true
             } else {
-                //                audioRecorder.startRecording()
+                //                appModel.audioRecorderManager.startRecording()
             }
+
+            suggestionManager.pushSuggestion("123123")
         }
-        .onChange(of: audioRecorder.hasPermission) { oldValue, newValue in
+        .onChange(of: audioRecorderManager.hasPermission) {
+            oldValue,
+            newValue in
             if !newValue {
                 showPermissionModal = true
             } else {

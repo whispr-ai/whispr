@@ -9,12 +9,13 @@ import AVFoundation
 import Foundation
 import SwiftyJSON
 
-class DashScopeTranscriptionManager: NSObject, ObservableObject {
-    @Published var tempText: String = ""
-    @Published var globalText: String = ""
-    @Published var isConnected = false
-    @Published var connectionError: String?
-    @Published var isSentenceEnd: Bool = false
+@Observable
+class DashScopeTranscriptionManager: NSObject {
+    var tempText: String = ""
+    var globalText: String = ""
+    var isConnected = false
+    var connectionError: String?
+    var isSentenceEnd: Bool = false
 
     private var webSocketTask: URLSessionWebSocketTask?
     private var urlSession: URLSession?

@@ -8,8 +8,9 @@
 import Foundation
 import SwiftUI
 
-class SuggestionManager: ObservableObject {
-    @Published var suggestions: [String] = []
+@Observable
+class SuggestionManager {
+    var suggestions: [String] = []
 
     // 添加新的建议
     func pushSuggestion(_ suggestion: String) {

@@ -24,14 +24,15 @@ struct DifyFileInput {
     }
 }
 
-class DifyManager: NSObject, ObservableObject {
-    @Published var response: String = ""
-    @Published var isLoading = false
-    @Published var connectionError: String?
-    @Published var conversationId: String = ""
-    @Published var currentUsage: [String: Any] = [:]
-    @Published var retrieverResources: [[String: Any]] = []
-    @Published var lastResponseJSON: JSON = JSON.null
+@Observable
+class DifyManager {
+    var response: String = ""
+    var isLoading = false
+    var connectionError: String?
+    var conversationId: String = ""
+    var currentUsage: [String: Any] = [:]
+    var retrieverResources: [[String: Any]] = []
+    var lastResponseJSON: JSON = JSON.null
 
     private let baseURL = "https://api.dify.ai/v1"
     private let userId = "whispr-user-\(UUID().uuidString)"

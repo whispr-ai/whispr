@@ -9,10 +9,11 @@ import AVFoundation
 import Foundation
 import SwiftUI
 
-class AudioRecorderManager: NSObject, ObservableObject {
-    @Published var isRecording = false
-    @Published var hasPermission = false
-    @Published var permissionStatus: String = "未知"
+@Observable
+class AudioRecorderManager {
+    var isRecording = false
+    var hasPermission = false
+    var permissionStatus: String = "未知"
 
     private var audioRecorder: AVAudioRecorder?
     private var audioEngine: AVAudioEngine?
@@ -20,12 +21,13 @@ class AudioRecorderManager: NSObject, ObservableObject {
     private let audioSession = AVAudioSession.sharedInstance()
 
     // Deepgram WebSocket 管理器 - 公开访问
-    let transcriptionManager = DashScopeTranscriptionManager()
+    var transcriptionManager: DashScopeTranscriptionManager?
 
-    override init() {
-        super.init()
+    init() {
+
         checkPermissionStatus()
         setupAudioEngine()
+        
     }
 
     // MARK: - Audio Engine Setup
@@ -78,7 +80,7 @@ class AudioRecorderManager: NSObject, ObservableObject {
             )
 
             // 连接到 OpenAI WebSocket
-            transcriptionManager.connect()
+            transcriptionManager!.connect()
 
             // 启动音频引擎进行实时流传输
             try startAudioStreaming()
@@ -170,7 +172,7 @@ class AudioRecorderManager: NSObject, ObservableObject {
         ) { [weak self] buffer, time in
             // 在这里进行格式转换到 Deepgram 要求的格式
             if let convertedData = self?.convertBufferToDeepgramFormat(buffer) {
-                self?.transcriptionManager.sendAudioData(convertedData)
+                self?.transcriptionManager!.sendAudioData(convertedData)
             }
         }
 
@@ -298,7 +300,7 @@ class AudioRecorderManager: NSObject, ObservableObject {
         audioRecorder?.stop()
 
         // 断开 WebSocket 连接
-        transcriptionManager.disconnect()
+        transcriptionManager?.disconnect()
 
         isRecording = false
 
