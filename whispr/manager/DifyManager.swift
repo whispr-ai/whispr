@@ -34,8 +34,13 @@ class DifyManager {
     var retrieverResources: [[String: Any]] = []
     var lastResponseJSON: JSON = JSON.null
 
+    private let appKey: String
     private let baseURL = "https://api.dify.ai/v1"
     private let userId = "whispr-user-\(UUID().uuidString)"
+
+    init(appKey: String) {
+        self.appKey = appKey
+    }
 
     // MARK: - Public Methods
 
@@ -45,7 +50,6 @@ class DifyManager {
     ///   - files: 可选的文件列表
     ///   - completion: 完成回调
     func sendChatMessage(
-        appKey: String,
         query: String,
         files: [DifyFileInput]? = nil,
         completion: @escaping (Result<JSON, Error>) -> Void
@@ -70,7 +74,6 @@ class DifyManager {
         }
 
         sendRequest(
-            appKey: appKey,
             params: requestParams,
             completion: completion
         )
@@ -123,7 +126,6 @@ class DifyManager {
     // MARK: - Private Methods
 
     private func sendRequest(
-        appKey: String,
         params: [String: Any],
         completion: @escaping (Result<JSON, Error>) -> Void
     ) {
@@ -135,7 +137,7 @@ class DifyManager {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue(
-            "Bearer \(appKey)",
+            "Bearer \(self.appKey)",
             forHTTPHeaderField: "Authorization"
         )
         urlRequest.setValue(

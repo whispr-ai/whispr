@@ -15,7 +15,6 @@ struct whisprApp: App {
         DashScopeTranscriptionManager = DashScopeTranscriptionManager()
     @State private var audioRecorderManager: AudioRecorderManager =
         AudioRecorderManager()
-    @State private var difyManager: DifyManager = DifyManager()
     @State private var suggestionManager: SuggestionManager =
         SuggestionManager()
 
@@ -30,7 +29,6 @@ struct whisprApp: App {
             ImmersiveView()
                 .environment(dashscopeTranscriptionManager)
                 .environment(audioRecorderManager)
-                .environment(difyManager)
                 .environment(suggestionManager)
                 .onAppear {
                     self.audioRecorderManager.transcriptionManager =

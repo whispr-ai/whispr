@@ -13,11 +13,13 @@ struct ContentView: View {
 
     @Environment(AudioRecorderManager.self) var audioRecorderManager
     @Environment(SuggestionManager.self) var suggestionManager
-    @Environment(DifyManager.self) var difyManager
     @Environment(DashScopeTranscriptionManager.self)
     var dashscopeTranscriptionManager
 
     @State private var showPermissionModal = false
+    @State private var suggestDifyManager = DifyManager(
+        appKey: "app-CssxMUhsPHR1BDCClE6VsbYK"
+    )
 
     var body: some View {
         VStack {
@@ -82,13 +84,13 @@ struct ContentView: View {
             newValue in
             if oldValue != newValue && !newValue.isEmpty {
                 print("New transcription: \(newValue)")
-                difyManager.sendChatMessage(
-                    appKey: "app-CssxMUhsPHR1BDCClE6VsbYK",
+                // 建议提问
+                suggestDifyManager.sendChatMessage(
                     query: newValue
                 ) { result in
                     switch result {
                     case .success(let json):
-                        var answer = json["answer"].stringValue
+                        let answer = json["answer"].stringValue
                         if !answer.contains("continue_listening") {
                             suggestionManager.pushSuggestion(
                                 json["answer"].stringValue
