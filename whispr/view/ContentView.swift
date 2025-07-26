@@ -8,6 +8,7 @@
 import RealityKit
 import RealityKitContent
 import SwiftUI
+import SwiftyJSON
 
 struct ContentView: View {
 
@@ -19,6 +20,9 @@ struct ContentView: View {
     @State private var showPermissionModal = false
     @State private var suggestDifyManager = DifyManager(
         appKey: "app-CssxMUhsPHR1BDCClE6VsbYK"
+    )
+    @State private var emotionDifyManager = DifyManager(
+        appKey: "app-JvLe5FBY1ND9hR0Cu7cbb0Da"
     )
 
     var body: some View {
@@ -43,6 +47,7 @@ struct ContentView: View {
 
                 // 右侧建议卡片
                 VStack {
+
                     Spacer()
 
                     ForEach(
@@ -70,6 +75,14 @@ struct ContentView: View {
             } else {
                 //                appModel.audioRecorderManager.startRecording()
             }
+
+            suggestionManager.pushSuggestion(
+                "q12312123q12312123q12312123q12312123q12312123q12312123"
+            )
+            suggestionManager.pushSuggestion("q12312123q12312123q12312123")
+            suggestionManager.pushSuggestion(
+                "q12312123q12312123q12312123q12312123"
+            )
         }
         .onChange(of: audioRecorderManager.hasPermission) {
             oldValue,
@@ -82,23 +95,53 @@ struct ContentView: View {
         }.onChange(of: dashscopeTranscriptionManager.latestSentence) {
             oldValue,
             newValue in
-            if oldValue != newValue && !newValue.isEmpty {
-                print("New transcription: \(newValue)")
-                // 建议提问
-                suggestDifyManager.sendChatMessage(
-                    query: newValue
-                ) { result in
-                    switch result {
-                    case .success(let json):
-                        let answer = json["answer"].stringValue
-                        if !answer.contains("continue_listening") {
-                            suggestionManager.pushSuggestion(
-                                json["answer"].stringValue
-                            )
-                        }
-                    case .failure(_):
-                        print("Error sending chat message: \(result)")
+            if oldValue == newValue || newValue.isEmpty {
+                return
+            }
+            print("New transcription: \(newValue)")
+            // 建议提问
+            //            suggestDifyManager.sendChatMessage(
+            //                query: newValue
+            //            ) { result in
+            //                switch result {
+            //                case .success(let json):
+            //                    let answer = json["answer"].stringValue
+            //                    if !answer.contains("continue_listening") {
+            //                        suggestionManager.pushSuggestion(
+            //                            json["answer"].stringValue
+            //                        )
+            //                    }
+            //                case .failure(_):
+            //                    print("Error sending chat message: \(result)")
+            //                }
+            //            }
+            // 情感提问
+            emotionDifyManager.sendChatMessage(
+                query: newValue
+            ) { result in
+                switch result {
+                case .success(let json):
+                    let answer = json["answer"].stringValue
+                    if let data = answer.data(using: .utf8) {
+
+                        let answerJSON = JSON(data)
+
+                        let evaluationChange = answerJSON["evaluation_change"]
+                            .stringValue
+                        let score = answerJSON["score"].intValue
+                        let currentEmotion = answerJSON["current_emotion"]
+                            .stringValue
+                        let reason = answerJSON["reason"].stringValue
+
+                        print(
+                            "变化: \(evaluationChange), 分数: \(score), 情绪: \(currentEmotion), 原因: \(reason)"
+                        )
+
+                    } else {
+                        print("无法将 answer 字符串转换为 Data")
                     }
+                case .failure(_):
+                    print("Error sending chat message: \(result)")
                 }
             }
         }

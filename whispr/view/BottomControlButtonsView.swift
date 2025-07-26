@@ -22,14 +22,12 @@ struct BottomControlButtonsView: View {
                     .font(.system(size: 24))
                     .foregroundColor(.white)
                     .frame(width: 60, height: 60)
-                    .background(Circle().fill(.regularMaterial))
                     .background(
-                        Circle().fill(
-                            audioRecorderManager.isRecording
-                                ? Color.green.opacity(1)
-                                : Color.black.opacity(1)
-                        )
+                        (audioRecorderManager.isRecording
+                            ? .green
+                            : .clear)
                     )
+                    .glassBackgroundEffect(in: .circle)
                     .clipShape(Circle())
             }.help(audioRecorderManager.isRecording ? "停止" : "开始聆听")
                 .buttonStyle(.plain)
@@ -43,8 +41,7 @@ struct BottomControlButtonsView: View {
                     .font(.system(size: 24))
                     .foregroundColor(.white)
                     .frame(width: 60, height: 60)
-                    .background(Circle().fill(.regularMaterial))
-                    .background(Circle().fill(Color.black.opacity(1)))
+                    .glassBackgroundEffect(in: .circle)
                     .clipShape(Circle())
             }.help("清屏")
                 .buttonStyle(.plain)

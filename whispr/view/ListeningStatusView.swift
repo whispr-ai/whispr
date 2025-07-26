@@ -36,15 +36,8 @@ struct ListeningStatusView: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 18)
-            .background(
-                RoundedRectangle(cornerRadius: 25)
-                    .fill(.regularMaterial)
-                    .background(Color.black.opacity(0.5))
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 25))
-            // 边框渐变并且圆角
             .overlay(
-                RoundedRectangle(cornerRadius: 25)
+                RoundedRectangle(cornerRadius: 30)
                     .stroke(
                         LinearGradient(
                             gradient: Gradient(colors: borderColors),
@@ -54,6 +47,7 @@ struct ListeningStatusView: View {
                         lineWidth: 2
                     )
             )
+            .glassBackgroundEffect()
         }
         .onAppear {
             updateAnimation()

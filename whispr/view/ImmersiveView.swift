@@ -35,10 +35,20 @@ struct ImmersiveView: View {
                     )
                 }
 
+                if let emotionEntity = attachments.entity(for: "emotion") {
+                    followRoot.addChild(emotionEntity)
+                    emotionEntity.setPosition(
+                        [0, 0.1, -0.8],
+                        relativeTo: followRoot
+                    )
+                }
             }
         } attachments: {
             Attachment(id: "contentView") {
                 ContentView().frame(width: 1200, height: 950)
+            }
+            Attachment(id: "emotion") {
+                EmotionCardView()
             }
         }
 

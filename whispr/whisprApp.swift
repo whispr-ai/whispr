@@ -17,6 +17,8 @@ struct whisprApp: App {
         AudioRecorderManager()
     @State private var suggestionManager: SuggestionManager =
         SuggestionManager()
+    @State private var emotionManager: EmotionManager =
+        EmotionManager()
 
     // Register the system and the component.
     init() {
@@ -30,6 +32,7 @@ struct whisprApp: App {
                 .environment(dashscopeTranscriptionManager)
                 .environment(audioRecorderManager)
                 .environment(suggestionManager)
+                .environment(emotionManager)
                 .onAppear {
                     self.audioRecorderManager.transcriptionManager =
                         dashscopeTranscriptionManager

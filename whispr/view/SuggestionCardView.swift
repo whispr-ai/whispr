@@ -27,12 +27,7 @@ struct SuggestionCard: View {
         }
         .padding(20)
         .frame(width: 350)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(.regularMaterial)
-                .background(Color.black.opacity(0.5))
-
-        )
+        .glassBackgroundEffect(in: .containerRelative)
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
