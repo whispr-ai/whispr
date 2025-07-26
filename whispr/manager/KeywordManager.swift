@@ -10,7 +10,7 @@ import SwiftUI
 
 @Observable
 class KeywordManager {
-    var keywords: [String] = []
+    var keywords: [String] = ["企业家", "创业", "创新", "领导力", "市场营销"]
 
     // 添加新的关键词
     func setKeywords(_ keywords: [String]) {
