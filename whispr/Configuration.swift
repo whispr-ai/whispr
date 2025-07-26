@@ -32,6 +32,18 @@ class Configuration {
         return "your_dashscope_api_key_here"
     }
     
+    // MARK: - Dify Configuration
+    static var difyAPIKey: String {
+        // 首先尝试从环境变量获取
+        if let envKey = ProcessInfo.processInfo.environment["DIFY_API_KEY"],
+           !envKey.isEmpty {
+            return envKey
+        }
+        
+        // 如果环境变量不存在，返回默认值（在生产环境中应该使用安全的配置方式）
+        return "your_dify_api_key_here"
+    }
+    
     // MARK: - Validation
     static var hasValidDeepgramAPIKey: Bool {
         let key = deepgramAPIKey
@@ -41,6 +53,11 @@ class Configuration {
     static var hasValidDashScopeAPIKey: Bool {
         let key = dashScopeAPIKey
         return !key.isEmpty && key != "your_dashscope_api_key_here"
+    }
+    
+    static var hasValidDifyAPIKey: Bool {
+        let key = difyAPIKey
+        return !key.isEmpty && key != "your_dify_api_key_here"
     }
     
     static var hasValidAPIKey: Bool {
@@ -57,6 +74,14 @@ class Configuration {
     
     static var dashScopeAPIKeySource: String {
         if ProcessInfo.processInfo.environment["DASHSCOPE_API_KEY"] != nil {
+            return "环境变量"
+        } else {
+            return "配置文件"
+        }
+    }
+    
+    static var difyAPIKeySource: String {
+        if ProcessInfo.processInfo.environment["DIFY_API_KEY"] != nil {
             return "环境变量"
         } else {
             return "配置文件"

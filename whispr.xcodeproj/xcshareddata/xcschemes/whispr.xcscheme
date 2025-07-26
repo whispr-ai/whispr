@@ -74,6 +74,11 @@
             value = "sk-7bb3329ec06b4da08982b62fc9f885a3"
             isEnabled = "YES">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "DIFY_API_KEY"
+            value = "app-DsL4ZcxbeTeBcIbUAUnz6r7U"
+            isEnabled = "YES">
+         </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction

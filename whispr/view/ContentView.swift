@@ -12,6 +12,8 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var audioRecorder = AudioRecorderManager()
     @StateObject private var suggestionManager = SuggestionManager()
+    @StateObject private var difyManager = DifyManager()
+
     @State private var showPermissionModal = false
 
     var body: some View {
