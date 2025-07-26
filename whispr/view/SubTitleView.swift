@@ -24,6 +24,8 @@ struct SubTitleView: View {
                                 + transcriptionManager.tempText
                     )
                     .font(.system(size: 17))
+                    .kerning(1.5)
+                    .lineSpacing(4)
                     .foregroundColor(.white)
                     .padding(.horizontal, 8)
                     .padding(.top, 8)
