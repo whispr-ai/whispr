@@ -11,6 +11,9 @@ struct BottomControlButtonsView: View {
 
     @Environment(AudioRecorderManager.self) var audioRecorderManager
     @Environment(SuggestionManager.self) var suggestionManager
+    @Environment(KeywordManager.self) var keywordManager
+    @Environment(EmotionManager.self) var emotionManager
+    @Environment(SearchManager.self) var searchManager
 
     var body: some View {
         HStack(spacing: 18) {
@@ -36,6 +39,9 @@ struct BottomControlButtonsView: View {
             Button(action: {
                 audioRecorderManager.transcriptionManager?.clear()
                 suggestionManager.clear()
+                keywordManager.clear()
+                emotionManager.clear()
+                searchManager.clear()
             }) {
                 Image(systemName: "xmark.bin")
                     .font(.system(size: 24))

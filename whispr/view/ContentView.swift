@@ -18,6 +18,7 @@ struct ContentView: View {
     var dashscopeTranscriptionManager
     @Environment(EmotionManager.self) var emotionManager
     @Environment(KeywordManager.self) var keywordManager
+    @Environment(SearchManager.self) var searchManager
 
     @State private var showPermissionModal = false
     @State private var suggestDifyManager = DifyManager(
@@ -29,6 +30,9 @@ struct ContentView: View {
     )
     @State private var keywordDifyManager = DifyManager(
         appKey: "app-CssxMUhsPHR1BDCClE6VsbYK"
+    )
+    @State private var searchDifyManager = DifyManager(
+        appKey: "app-DsL4ZcxbeTeBcIbUAUnz6r7U"
     )
 
     var body: some View {
@@ -45,6 +49,18 @@ struct ContentView: View {
                     SubTitleView()
 
                     Spacer()
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(
+                            Array(
+                                searchManager.getLatestThree()
+                                    .enumerated()
+                            ),
+                            id: \.offset
+                        ) { index, search in
+                            SearchCardView(search: search)
+                        }
+                    }
 
                 }
                 .frame(width: 300)
@@ -159,6 +175,36 @@ struct ContentView: View {
                             "变化: \(evaluationChange), 分数: \(score), 情绪: \(currentEmotion), 原因: \(reason)"
                         )
 
+                    } else {
+                        print("无法将 answer 字符串转换为 Data")
+                    }
+                case .failure(_):
+                    print("Error sending chat message: \(result)")
+                }
+            }
+            // 搜索提问
+            searchDifyManager.sendChatMessage(
+                query: newValue
+            ) { result in
+                switch result {
+                case .success(let json):
+                    let answer = json["answer"].stringValue
+                    var searchResults: [Search] = []
+                    if let data = answer.data(using: .utf8) {
+                        let jsonArray = JSON(data).arrayValue
+                        for item in jsonArray {
+                            let link = item["link"].stringValue
+                            let snippet = item["snippet"].stringValue
+                            let title = item["title"].stringValue
+                            searchResults.append(
+                                Search(
+                                    link: link,
+                                    snippet: snippet,
+                                    title: title
+                                )
+                            )
+                        }
+                        searchManager.setSearchs(searchResults)
                     } else {
                         print("无法将 answer 字符串转换为 Data")
                     }

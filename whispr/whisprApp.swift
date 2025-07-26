@@ -20,6 +20,7 @@ struct whisprApp: App {
     @State private var emotionManager: EmotionManager =
         EmotionManager()
     @State private var keywordManager: KeywordManager = KeywordManager()
+    @State private var searchManager: SearchManager = SearchManager()
 
     // Register the system and the component.
     init() {
@@ -35,6 +36,7 @@ struct whisprApp: App {
                 .environment(suggestionManager)
                 .environment(emotionManager)
                 .environment(keywordManager)
+                .environment(searchManager)
                 .onAppear {
                     self.audioRecorderManager.transcriptionManager =
                         dashscopeTranscriptionManager

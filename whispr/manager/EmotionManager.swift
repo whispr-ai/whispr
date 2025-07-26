@@ -60,4 +60,10 @@ class EmotionManager {
         }
     }
 
+    func clear() {
+        DispatchQueue.main.async {
+            self.emotion = .neutral
+        }
+    }
+
 }
