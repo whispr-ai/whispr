@@ -16,6 +16,7 @@ class DashScopeTranscriptionManager: NSObject {
     var isConnected = false
     var connectionError: String?
     var isSentenceEnd: Bool = false
+    var latestSentence: String = ""
 
     private var webSocketTask: URLSessionWebSocketTask?
     private var urlSession: URLSession?
@@ -265,7 +266,7 @@ class DashScopeTranscriptionManager: NSObject {
                             // 最终结果
                             self.tempText = ""
                             self.globalText += transcript + " "
-
+                            self.latestSentence = transcript
                             // 检查是否有 stash 数据
                             let stash = sentence["stash"]
                             if stash.exists() {

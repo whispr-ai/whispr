@@ -13,6 +13,9 @@ struct ContentView: View {
 
     @Environment(AudioRecorderManager.self) var audioRecorderManager
     @Environment(SuggestionManager.self) var suggestionManager
+    @Environment(DifyManager.self) var difyManager
+    @Environment(DashScopeTranscriptionManager.self)
+    var dashscopeTranscriptionManager
 
     @State private var showPermissionModal = false
 
@@ -65,8 +68,6 @@ struct ContentView: View {
             } else {
                 //                appModel.audioRecorderManager.startRecording()
             }
-
-            suggestionManager.pushSuggestion("123123")
         }
         .onChange(of: audioRecorderManager.hasPermission) {
             oldValue,
@@ -75,6 +76,28 @@ struct ContentView: View {
                 showPermissionModal = true
             } else {
                 showPermissionModal = false
+            }
+        }.onChange(of: dashscopeTranscriptionManager.latestSentence) {
+            oldValue,
+            newValue in
+            if oldValue != newValue && !newValue.isEmpty {
+                print("New transcription: \(newValue)")
+                difyManager.sendChatMessage(
+                    appKey: "app-CssxMUhsPHR1BDCClE6VsbYK",
+                    query: newValue
+                ) { result in
+                    switch result {
+                    case .success(let json):
+                        var answer = json["answer"].stringValue
+                        if !answer.contains("continue_listening") {
+                            suggestionManager.pushSuggestion(
+                                json["answer"].stringValue
+                            )
+                        }
+                    case .failure(_):
+                        print("Error sending chat message: \(result)")
+                    }
+                }
             }
         }
     }
