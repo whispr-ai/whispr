@@ -43,13 +43,13 @@ struct ImmersiveView: View {
                     )
                 }
 
-                //                if let keywordEntity = attachments.entity(for: "keyword") {
-                //                    followRoot.addChild(keywordEntity)
-                //                    keywordEntity.setPosition(
-                //                        [0, -0.14, -0.8],
-                //                        relativeTo: followRoot
-                //                    )
-                //                }
+                if let keywordEntity = attachments.entity(for: "keyword") {
+                    followRoot.addChild(keywordEntity)
+                    keywordEntity.setPosition(
+                        [0, -0.14, -0.8],
+                        relativeTo: followRoot
+                    )
+                }
             }
         } attachments: {
             Attachment(id: "contentView") {
@@ -58,9 +58,9 @@ struct ImmersiveView: View {
             Attachment(id: "emotion") {
                 EmotionCardView()
             }
-            //            Attachment(id: "keyword") {
-            //                KeywordCardView()
-            //            }
+            Attachment(id: "keyword") {
+                KeywordCardView()
+            }
         }
 
     }

@@ -17,14 +17,18 @@ struct ContentView: View {
     @Environment(DashScopeTranscriptionManager.self)
     var dashscopeTranscriptionManager
     @Environment(EmotionManager.self) var emotionManager
+    @Environment(KeywordManager.self) var keywordManager
 
     @State private var showPermissionModal = false
     @State private var suggestDifyManager = DifyManager(
-        //        appKey: "app-CssxMUhsPHR1BDCClE6VsbYK"
+
         appKey: "app-UjO4nIsJiByalQVNz2r8vz9S"
     )
     @State private var emotionDifyManager = DifyManager(
         appKey: "app-JvLe5FBY1ND9hR0Cu7cbb0Da"
+    )
+    @State private var keywordDifyManager = DifyManager(
+        appKey: "app-CssxMUhsPHR1BDCClE6VsbYK"
     )
 
     var body: some View {
@@ -104,6 +108,29 @@ struct ContentView: View {
                         suggestionManager.pushSuggestion(
                             json["answer"].stringValue
                         )
+                    }
+                case .failure(_):
+                    print("Error sending chat message: \(result)")
+                }
+            }
+            // 关键词提问
+            keywordDifyManager.sendChatMessage(
+                query: newValue
+            ) { result in
+                switch result {
+                case .success(let json):
+                    let answer = json["answer"].stringValue
+                    if !answer.contains("continue_listening") {
+                        // 分割字符串 answer 分割符 /
+                        let keywords =
+                            answer
+                            .split(separator: "/")
+                            .filter { Substring in
+                                !Substring.isEmpty
+                            }.map {
+                                String($0)
+                            }
+                        keywordManager.setKeywords(keywords)
                     }
                 case .failure(_):
                     print("Error sending chat message: \(result)")
