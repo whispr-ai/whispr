@@ -15,13 +15,13 @@ struct SuggestionCard: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("建议")
                 .font(.headline)
-                .foregroundColor(.primary)
+                .foregroundColor(.secondary)
 
             Text(
                 suggestion
             )
             .font(.body)
-            .foregroundColor(.secondary)
+            .foregroundColor(.primary)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
