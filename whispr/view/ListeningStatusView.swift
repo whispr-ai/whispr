@@ -55,8 +55,6 @@ struct ListeningStatusView: View {
         .onChange(of: status) {
             updateAnimation()
         }
-
-        Spacer()
     }
 
     // MARK: - Computed Properties

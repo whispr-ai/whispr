@@ -25,7 +25,7 @@ struct SubTitleView: View {
                     )
                     .font(.system(size: 17))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 8)
                     .padding(.top, 8)
 
                     // 添加一个底部spacer，确保文本能真正滚动到最底部
@@ -35,7 +35,7 @@ struct SubTitleView: View {
 
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(16)
+                .padding(8)
             }
             .onChange(of: transcriptionManager.globalText) { _, _ in
                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -48,7 +48,7 @@ struct SubTitleView: View {
                 }
             }
         }
-        .frame(height: 150)
+        .frame(height: 260)
         .mask(
             // 创建渐变遮罩，中间完全显示，上下边缘淡出
             LinearGradient(
