@@ -204,7 +204,7 @@ struct ContentView: View {
                                 )
                             )
                         }
-                        searchManager.setSearchs(searchResults)
+                        searchManager.pushSearchs(searchResults)
                     } else {
                         print("无法将 answer 字符串转换为 Data")
                     }

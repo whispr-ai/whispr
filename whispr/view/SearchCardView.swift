@@ -38,11 +38,6 @@ struct SearchCardView: View {
         .padding(28)
         .frame(width: 350)
         .glassBackgroundEffect(in: RoundedRectangle(cornerRadius: 20))
-        .onTapGesture {
-            if let url = URL(string: search.link) {
-                UIApplication.shared.open(url)
-            }
-        }
     }
 }
 
