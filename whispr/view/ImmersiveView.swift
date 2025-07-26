@@ -30,7 +30,7 @@ struct ImmersiveView: View {
                 if let uiEntity = attachments.entity(for: "contentView") {
                     followRoot.addChild(uiEntity)
                     uiEntity.setPosition(
-                        [0, -0.1, -1],
+                        [0, -0.1, -1.2],
                         relativeTo: followRoot
                     )
                 }
@@ -38,7 +38,7 @@ struct ImmersiveView: View {
                 if let emotionEntity = attachments.entity(for: "emotion") {
                     followRoot.addChild(emotionEntity)
                     emotionEntity.setPosition(
-                        [0, 0.12, -0.85],
+                        [0, 0.12, -1.05],
                         relativeTo: followRoot
                     )
                 }
@@ -46,14 +46,14 @@ struct ImmersiveView: View {
                 if let keywordEntity = attachments.entity(for: "keyword") {
                     followRoot.addChild(keywordEntity)
                     keywordEntity.setPosition(
-                        [0, -0.14, -0.8],
+                        [0, -0.24, -0.98],
                         relativeTo: followRoot
                     )
                 }
             }
         } attachments: {
             Attachment(id: "contentView") {
-                ContentView().frame(width: 1250, height: 925)
+                ContentView().frame(width: 1400, height: 1000)
             }
             Attachment(id: "emotion") {
                 EmotionCardView()

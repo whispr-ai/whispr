@@ -23,7 +23,9 @@ struct KeywordCardView: View {
                     effect,
                     isActive,
                     _ in
-                    effect.opacity(isActive ? 1 : 0)
+                    effect.animation(.default.delay(isActive ? 0.3 : 0.5)) {
+                        $0.opacity(isActive ? 1 : 0)
+                    }
                 }
             }
 
@@ -37,20 +39,22 @@ struct KeywordCardView: View {
             )
             .glassBackgroundEffect()
             .hoverEffect { effect, isActive, proxy in
-                effect.clipShape(
-                    RoundedRectangle(cornerRadius: .infinity)
-                        .size(
-                            width: isActive
-                                ? proxy.size.width : 150,
-                            height: proxy.size.height,
-                            anchor: .leading
-                        )
-                )
-                .offset(
-                    x: isActive ? 0 : proxy.size.width / 2 - (150 / 2),
-                    y: 0
+                effect.animation(.default.delay(isActive ? 0.3 : 0.5)) {
+                    $0.clipShape(
+                        RoundedRectangle(cornerRadius: .infinity)
+                            .size(
+                                width: isActive
+                                    ? proxy.size.width : 150,
+                                height: proxy.size.height,
+                                anchor: .leading
+                            )
+                    )
+                    .offset(
+                        x: isActive ? 0 : proxy.size.width / 2 - (150 / 2),
+                        y: 0
 
-                )
+                    )
+                }
             }.hoverEffectGroup()
         }
     }

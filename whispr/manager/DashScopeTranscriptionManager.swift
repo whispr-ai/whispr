@@ -124,7 +124,7 @@ class DashScopeTranscriptionManager: NSObject {
                     sampleRate: 16000,
                     languageHints: ["zh", "en"],
                     disfluencyRemovalEnabled: true,
-                    semanticPunctuationEnabled: true,
+                    semanticPunctuationEnabled: false,
                     punctuationPredictionEnabled: true,
                     inverseTextNormalizationEnabled: true,
                     heartbeat: true,
