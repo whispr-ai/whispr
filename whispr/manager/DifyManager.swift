@@ -33,21 +33,8 @@ class DifyManager: NSObject, ObservableObject {
     @Published var retrieverResources: [[String: Any]] = []
     @Published var lastResponseJSON: JSON = JSON.null
 
-    private let apiKey = Configuration.difyAPIKey
     private let baseURL = "https://api.dify.ai/v1"
     private let userId = "whispr-user-\(UUID().uuidString)"
-
-    override init() {
-        super.init()
-
-        // 打印 API Key 来源信息
-        print("🔑 Dify API Key 来源: \(Configuration.difyAPIKeySource)")
-
-        // 验证 API Key 是否可用
-        if !Configuration.hasValidDifyAPIKey {
-            print("⚠️ 警告: 未配置有效的 Dify API Key")
-        }
-    }
 
     // MARK: - Public Methods
 
@@ -57,18 +44,11 @@ class DifyManager: NSObject, ObservableObject {
     ///   - files: 可选的文件列表
     ///   - completion: 完成回调
     func sendChatMessage(
+        appKey: String,
         query: String,
         files: [DifyFileInput]? = nil,
         completion: @escaping (Result<JSON, Error>) -> Void
     ) {
-        guard Configuration.hasValidDifyAPIKey else {
-            DispatchQueue.main.async {
-                self.connectionError = "未配置有效的 Dify API Key"
-            }
-            completion(.failure(DifyError.invalidAPIKey))
-            return
-        }
-
         DispatchQueue.main.async {
             self.isLoading = true
             self.connectionError = nil
@@ -88,28 +68,9 @@ class DifyManager: NSObject, ObservableObject {
             requestParams["files"] = files.map { $0.toDictionary() }
         }
 
-        sendRequest(params: requestParams, completion: completion)
-    }
-
-    /// 发送带图片的聊天消息
-    /// - Parameters:
-    ///   - query: 用户的查询内容
-    ///   - imageURL: 图片URL
-    ///   - completion: 完成回调
-    func sendChatMessageWithImage(
-        query: String,
-        imageURL: String,
-        completion: @escaping (Result<JSON, Error>) -> Void
-    ) {
-        let imageFile = DifyFileInput(
-            type: "image",
-            transferMethod: "remote_url",
-            url: imageURL
-        )
-
-        sendChatMessage(
-            query: query,
-            files: [imageFile],
+        sendRequest(
+            appKey: appKey,
+            params: requestParams,
             completion: completion
         )
     }
@@ -161,6 +122,7 @@ class DifyManager: NSObject, ObservableObject {
     // MARK: - Private Methods
 
     private func sendRequest(
+        appKey: String,
         params: [String: Any],
         completion: @escaping (Result<JSON, Error>) -> Void
     ) {
@@ -172,7 +134,7 @@ class DifyManager: NSObject, ObservableObject {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue(
-            "Bearer \(apiKey)",
+            "Bearer \(appKey)",
             forHTTPHeaderField: "Authorization"
         )
         urlRequest.setValue(
