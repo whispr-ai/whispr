@@ -1,5 +1,5 @@
 /*
-See the LICENSE.txt file for this sample’s licensing information.
+See the LICENSE.txt file for this sample's licensing information.
 
 Abstract:
 The system for following the device's position and updating the entity to move each time the scene rerenders.
@@ -45,27 +45,34 @@ public struct FollowSystem: System {
             matrix: deviceAnchor.originFromAnchorTransform
         )
 
-        // Create a transform that follows pitch (X-axis) and yaw (Y-axis) but removes roll (Z-axis)
+        // Create a rotation that follows pitch and yaw but removes roll
         let originalRotation = originalDeviceTransform.rotation
-        
-        // Extract Euler angles from quaternion
-        let w = originalRotation.vector.w
-        let x = originalRotation.vector.x
-        let y = originalRotation.vector.y
-        let z = originalRotation.vector.z
-        
-        // Calculate pitch (X-axis rotation) and yaw (Y-axis rotation)
-        let pitch = atan2(2.0 * (w * x + y * z), 1.0 - 2.0 * (x * x + y * y))
-        let yaw = atan2(2.0 * (w * y + x * z), 1.0 - 2.0 * (y * y + z * z))
-        
-        // Create rotation with pitch and yaw, but no roll
-        let pitchRotation = simd_quatf(angle: pitch, axis: SIMD3<Float>(1, 0, 0))
+
+        // Get the forward direction vector from the device rotation
+        let forward = originalRotation.act(SIMD3<Float>(0, 0, -1))
+
+        // Calculate pitch (up/down rotation)
+        let pitch = asin(forward.y)
+
+        // Calculate yaw (left/right rotation) - project forward to horizontal plane
+        let horizontalForward = simd_normalize(
+            SIMD3<Float>(forward.x, 0, forward.z)
+        )
+        let yaw = atan2(-horizontalForward.x, -horizontalForward.z)
+
+        // Create rotations for pitch and yaw separately
+        let pitchRotation = simd_quatf(
+            angle: pitch,
+            axis: SIMD3<Float>(1, 0, 0)
+        )
         let yawRotation = simd_quatf(angle: yaw, axis: SIMD3<Float>(0, 1, 0))
-        let combinedRotation = yawRotation * pitchRotation
+
+        // Combine pitch and yaw (no roll)
+        let levelRotation = yawRotation * pitchRotation
 
         let deviceTransform = Transform(
             scale: originalDeviceTransform.scale,
-            rotation: combinedRotation,
+            rotation: levelRotation,
             translation: originalDeviceTransform.translation
         )
 
@@ -76,7 +83,6 @@ public struct FollowSystem: System {
         )
 
         for entity in entities {
-
             // Move the entity to the device's transform.
             entity.move(
                 to: deviceTransform,
