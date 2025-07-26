@@ -13,7 +13,7 @@ struct SuggestionCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("引用")
+            Text("提示")
                 .font(.headline)
                 .foregroundColor(.secondary)
 
