@@ -43,4 +43,21 @@ class EmotionManager {
 
     var emotion: EmotionType = .neutral
 
+    func setEmotionByText(text: String) {
+        switch text {
+        case "悲伤":
+            self.emotion = .sadness
+        case "疑问":
+            self.emotion = .doubt
+        case "满意":
+            self.emotion = .satisfaction
+        case "愤怒":
+            self.emotion = .anger
+        case "失望":
+            self.emotion = .disappointment
+        default:
+            self.emotion = .neutral
+        }
+    }
+
 }

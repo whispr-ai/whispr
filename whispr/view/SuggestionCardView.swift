@@ -25,10 +25,9 @@ struct SuggestionCard: View {
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(20)
+        .padding(28)
         .frame(width: 350)
-        .glassBackgroundEffect(in: .containerRelative)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .glassBackgroundEffect(in: RoundedRectangle(cornerRadius: 20))
     }
 }
 
