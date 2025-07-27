@@ -2,6 +2,8 @@
 
 > 诞生于 AdventureX 2025 
 
+![cover_image](./cover.png)
+
 ## 什么是 Whispr？
 
 Whispr 是一款运行在 VisionOS 上的语音 Agent 应用，它重新定义了人与 AI 在混合现实环境中的交互方式。得益于 VisionPro 的物理传感器，Whispr 能够：
